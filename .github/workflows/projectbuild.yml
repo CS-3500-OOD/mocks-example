@@ -1,0 +1,38 @@
+name: gradleCI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    timeout-minutes: 3
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: setup jdk
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'adopt'
+          cache: gradle
+
+      - name: Build the project
+        run: ./gradlew build
+
+      # Note that running test task will also perform code coverage
+      - name: Run Tests
+        run: ./gradlew test
+
+      - name: Produce JavaDoc
+        run: ./gradlew javadoc
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Reports
+          path: build/reports/
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: JavaDocs
+          path: build/docs

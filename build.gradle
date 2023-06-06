@@ -1,0 +1,45 @@
+plugins {
+    id 'application'
+    id 'jacoco'
+    id 'checkstyle'
+}
+
+checkstyle {
+    toolVersion = '10.10.0'
+    configFile = 'config/checkstyle/cs3500-checkstyle.xml' as File
+}
+
+application {
+    mainClass = "cs3500.lab06.client.Driver"
+}
+
+//Jacoco for code coverage
+
+test {
+    finalizedBy jacocoTestReport // generate report after code coverage test
+}
+jacocoTestReport {
+    dependsOn test // make sure that test task run before reports are run.
+}
+
+group 'cs3500.project'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.1'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+    //https://github.com/webcompere/system-stubs
+    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.12.4'
+    testImplementation group: 'uk.org.webcompere', name: 'system-stubs-jupiter', version: '2.0.2'
+}
+
+test {
+    useJUnitPlatform()
+}
