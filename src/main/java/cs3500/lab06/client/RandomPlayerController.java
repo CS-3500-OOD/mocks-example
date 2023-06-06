@@ -11,14 +11,24 @@ public class RandomPlayerController implements PlayerController {
   private int previousGuess;
   private int lowBound;
   private int highBound;
+  private final Random random;
+
+  /**
+   * Constructs a random player with a nonsense previous guess and the initial bounds at 0 and 100.
+   * @param random Random to use for generating outputs.
+   */
+  public RandomPlayerController(Random random) {
+    this.random = random;
+    this.previousGuess = -1;
+    this.lowBound = 0;
+    this.highBound = 100;
+  }
 
   /**
    * Constructs a random player with a nonsense previous guess and the initial bounds at 0 and 100.
    */
   public RandomPlayerController() {
-    this.previousGuess = -1;
-    this.lowBound = 0;
-    this.highBound = 100;
+    this(new Random());
   }
 
   @Override
@@ -55,7 +65,6 @@ public class RandomPlayerController implements PlayerController {
    * @return the random guess
    */
   private int guessWithinBounds(int low, int high) {
-    Random random = new Random();
-    return random.nextInt(low, high);
+    return this.random.nextInt(low, high);
   }
 }

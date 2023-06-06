@@ -53,7 +53,6 @@ public class ProxyDealer {
       JsonParser parser = this.mapper.getFactory().createParser(this.in);
 
       while (!this.server.isClosed()) {
-        System.out.println(parser.getText());
         MessageJson message = parser.readValueAs(MessageJson.class);
         delegateMessage(message);
       }
@@ -124,7 +123,7 @@ public class ProxyDealer {
   private void handleWin(JsonNode arguments) {
     WinJson winJson = this.mapper.convertValue(arguments, WinJson.class);
 
-    this.player.win(winJson.isWinner());
+    this.player.win(winJson.isWin());
 
     this.out.println(VOID_RESPONSE);
   }

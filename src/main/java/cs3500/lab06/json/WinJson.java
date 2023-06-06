@@ -19,7 +19,7 @@ public record WinJson(
   /**
    * @return true if they won
    */
-  public boolean isWinner() {
+  public boolean isWin() {
     return win;
   }
 }
