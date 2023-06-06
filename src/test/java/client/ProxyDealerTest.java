@@ -17,7 +17,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Random;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -44,21 +43,25 @@ public class ProxyDealerTest {
    */
   @Test
   public void testVoidForWin() {
+    // Prepare sample message
     WinJson winJson = new WinJson(true);
-    MessageJson messageJson = new MessageJson("win", JsonUtils.serializeRecord(winJson));
-    JsonNode jsonNode = JsonUtils.serializeRecord(messageJson);
+    JsonNode sampleMessage = createSampleMessage("win", winJson);
 
-    Mocket socket = new Mocket(this.testLog, List.of(jsonNode.toString()));
+    // Create the client with all necessary messages
+    Mocket socket = new Mocket(this.testLog, List.of(sampleMessage.toString()));
 
+    // Create a Dealer
     try {
       this.dealer = new ProxyDealer(socket, new RandomPlayerController());
     } catch (IOException e) {
-      fail();
+      fail(); // fail if the dealer can't be created
     }
 
+    // run the dealer and verify the response
     this.dealer.run();
 
-    assertEquals("\"void\"\n", logToString());
+    String expected = "\"void\"\n";
+    assertEquals(expected, logToString());
   }
 
   /**
@@ -66,26 +69,29 @@ public class ProxyDealerTest {
    */
   @Test
   public void testGuessForHint() {
-    HintJson hintJson = new HintJson("higher");
-    MessageJson messageJson = new MessageJson("hint", JsonUtils.serializeRecord(hintJson));
-    JsonNode jsonNode = JsonUtils.serializeRecord(messageJson);
+    // Create sample hint
+    HintJson hintJson = new HintJson(HintJson.HIGHER);
+    JsonNode jsonNode = createSampleMessage("hint", hintJson);
 
+    // Create socket with sample input
     Mocket socket = new Mocket(this.testLog, List.of(jsonNode.toString()));
-    int seed = 0;
-    Random playerRandom = new Random(seed);
-    Random assertRandom = new Random(seed);
-    try {
 
-      this.dealer = new ProxyDealer(socket, new RandomPlayerController(playerRandom));
+    // Create a dealer
+    try {
+      this.dealer = new ProxyDealer(socket, new RandomPlayerController());
     } catch (IOException e) {
-      fail();
+      fail(); // fail if the dealer can't be created
     }
 
+    // Run dealer and verify response.
     this.dealer.run();
-
     responseToClass(GuessJson.class);
   }
 
+  /**
+   * Converts the ByteArrayOutputStream log to a string in UTF_8 format
+   * @return String representing the current log buffer
+   */
   private String logToString() {
     return testLog.toString(StandardCharsets.UTF_8);
   }
@@ -107,5 +113,16 @@ public class ProxyDealerTest {
       // -> test fails since it must have been the wrong type of response.
       fail();
     }
+  }
+
+  /**
+   * Create a MessageJson for some name and arguments.
+   * @param messageName name of the type of message; "hint" or "win"
+   * @param messageObject object to embed in a message json
+   * @return a MessageJson for the object
+   */
+  private JsonNode createSampleMessage(String messageName, Record messageObject) {
+    MessageJson messageJson = new MessageJson(messageName, JsonUtils.serializeRecord(messageObject));
+    return JsonUtils.serializeRecord(messageJson);
   }
 }

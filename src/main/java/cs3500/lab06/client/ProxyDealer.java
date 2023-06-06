@@ -23,7 +23,6 @@ public class ProxyDealer {
   private final PrintStream out;
   private final PlayerController player;
   private final ObjectMapper mapper = new ObjectMapper();
-
   private static final JsonNode VOID_RESPONSE =
       new ObjectMapper().getNodeFactory().textNode("void");
 

@@ -18,6 +18,15 @@ public record HintJson(
     @JsonProperty("hint") String hint) {
 
   /**
+   * User should guess higher.
+   */
+  public static final String HIGHER = "higher";
+  /**
+   * User should guess lower.
+   */
+  public static final String LOWER = "lower";
+
+  /**
    * Determines if the hint string is not empty.
    *
    * @return if the hint string is not empty
@@ -32,6 +41,6 @@ public record HintJson(
    * @return if the hint is equal to "lower"
    */
   public boolean shouldGuessLower() {
-    return this.hint.equals("lower");
+    return this.hint.equals(LOWER);
   }
 }
